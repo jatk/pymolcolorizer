@@ -1,4 +1,5 @@
 # pymolcolorizer
+Forked from https://github.com/kmdalton/pymolcolorizer and updated for Python 3 and added features. 
 
 ## Contents
 1. Installation
