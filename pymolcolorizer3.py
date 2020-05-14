@@ -14,10 +14,14 @@ class attributePainter():
     attributePainter(csvFN, **kwargs)
         csvFN: (string) the filename of the csv file containing the attribute you wish to paint on the residues;
                the file format is like 'chainID ('1,2,3,...Z' -- pymol allowed chain ids), residue number (int), value (float)\\n'
-        colormap = str: kwarg for specifying colormap. can be any colormap name from matplotlib ('http://matplotlib.org/examples/color/colormaps_reference.html')
+        colormapname = str: kwarg for specifying colormap. can be any colormap name from matplotlib ('http://matplotlib.org/examples/color/colormaps_reference.html'), default is plasma
+        min = int: optional kwarg for specifying min heatmap value, default is min from CSV
+        max = int: optional kwarg for specifying max heatmap value, default is max from CSV
     """
     def __init__(self, csvFN = None, **kw):
-        self.colormapname = kw.get('colormap', 'viridis')
+        self.colormapname = kw.get('colormapname', 'plasma')
+        self.min = kw.get('min', None)
+        self.max = kw.get('max', None)
         self.cmap = get_cmap(self.colormapname)
         self.chains = {}
         self.norms  = None
@@ -47,7 +51,10 @@ class attributePainter():
                         self.chains[chainID] = {resnum: value}
                 except ValueError:
                     print("Line number {}  ({}) was rejected -- could not format".format(i, line))
-        ranges = {chainID: (min(chain.values()), max(chain.values())) for chainID, chain in self.chains.items()}
+        if self.min == None:
+            ranges = {chainID: (min(chain.values()), max(chain.values())) for chainID, chain in self.chains.items()}
+        if self.min != None:
+            ranges = {chainID: (self.min, self.max) for chainID, chain in self.chains.items()}
         self.norms = {chainID: Normalize(r[0], r[1]) for chainID, r in ranges.items()}
         self.sm    = {chainID: ScalarMappable(norm, self.cmap) for chainID, norm in self.norms.items()}
         self.norms['global'] = Normalize(min([i[0] for i in ranges.values()]), max([i[1] for i in ranges.values()]))
@@ -67,13 +74,15 @@ class attributePainter():
         for resnum,value in self.chains[chainID].items(): 
             cmd.alter("chain {} and resi {}".format(chainID, resnum), "b={}".format(value))
 
-def paintStructure(csvFN, colormapname=None):
+def paintStructure(csvFN, colormapname=None, min=None, max=None):
     """
     Color all the chains in a structure by the parameters in a CSV file using a global colormap including all chains
     """
     if colormapname is None:
-        colormapname = 'viridis'
-    painter = attributePainter(csvFN)
+        colormapname = 'plasma'
+    print(min)
+    print(max)
+    painter = attributePainter(csvFN, colormapname=colormapname, min=min, max=max)
     for chainID in painter.chains.keys():
         painter.paintChain(chainID, colormapname=colormapname)
 
@@ -86,20 +95,20 @@ def modifyBfactors(csvFN):
     for chainID in painter.chains.keys():
         painter.modifyBfactors(chainID)
 
-def saveHorizontalColorbar(csvFN, outFN, colormapname=None):
+def saveHorizontalColorbar(csvFN, outFN, colormapname=None, min=None, max=None):
     if colormapname is None:
-        colormapname = 'viridis'
-    painter = attributePainter(csvFN)
-    plt.figure(figsize=(2,10))
+        colormapname = 'plasma'
+    painter = attributePainter(csvFN, colormapname=colormapname, min=min, max=max)
+    plt.figure(figsize=(10,2))
     ax = plt.gca()
     plt.colorbar(painter.sm['global'], cax=ax, orientation='horizontal')
     plt.savefig(outFN, fmt=outFN[-3:])
 
-def saveVerticalColorbar(csvFN, outFN, colormapname=None):
+def saveVerticalColorbar(csvFN, outFN, colormapname=None, min=None, max=None):
     if colormapname is None:
-        colormapname = 'viridis'
-    painter = attributePainter(csvFN)
-    plt.figure(figsize=(10,2))
+        colormapname = 'plasma'
+    painter = attributePainter(csvFN, colormapname=colormapname, min=min, max=max)
+    plt.figure(figsize=(2,10))
     ax = plt.gca()
     plt.colorbar(painter.sm['global'], cax=ax, orientation='vertical')
     plt.savefig(outFN, fmt=outFN[-3:])
