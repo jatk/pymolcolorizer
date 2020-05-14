@@ -15,29 +15,29 @@
 3. Numpy (http://www.numpy.org/)
 
 ###Download pymolcolorizer  
-"git clone http://github.com/kmdalton/pymolcolorizer"
+"git clone https://github.com/jatk/pymolcolorizer"
 
 ###Install within PyMOL GUI  
-The easiest way to install pymolcolorizer is through the builtin plugin manager within the PyMOL GUI. To install through the plugin manager do the following:
+The easiest way to install pymolcolorizer3 is through the builtin plugin manager within the PyMOL GUI. To install through the plugin manager do the following:
 
 
 1. Open the PyMOL software
 2. Navigate to the "Plugin --> Plugin Manager" option to launch the plugin manager
 3. Click on the "Install New Plugin" tab
 4. Under the "Install from local file" header click on "Choose file..."
-5. Select the "pymolcolorizer.py" file from the github repository you downloaded
+5. Select the "pymolcolorizer3.py" file from the github repository you downloaded
 
 ## Usage example  
-At the moment, pymolcolorizer provides a parser to color a structure by chain ID and residue numbers specified in a csv file. Any colormap supported by your current Matplotlib version can be used. See (http://matplotlib.org/examples/color/colormaps_reference.html) for a list of compatible colormaps. Selection is not supported excepting by chain IDs supplied in the CSV file. 
+At the moment, pymolcolorizer provides a parser to color a structure by chain ID and residue numbers specified in a csv file. Any colormap supported by your current Matplotlib version can be used. See (http://matplotlib.org/examples/color/colormaps_reference.html) for a list of compatible colormaps. Selection is not supported excepting by chain IDs supplied in the CSV file. Min/max heat map values can be speicified with the optional min and max kwargs, default is the min/max of the CSV.
 
 To use pymolcolorizer, simply call
-    colorFromCSV [CSV filename], colormapname = [Colormap name], min = [min], max = [max]
+    colorFromCSV [CSV filename], colormapname = [Colormap name], min = [min_value], max = [max_value]
 from within pymol. 
 
 A pair of example files can be found in the examples directory. To run them for instance you might type...
     
     load examples/mmcpn.pdb
-    colorFromCSV examples/mmcpn.csv, viridis
+    colorFromCSV examples/mmcpn.csv, colormapname = viridis
 This will color chain A and B of the MmCpn structure with the viridis colormap according to the values in the CSV file. The format for CSV input files is:
     
     ChainID,Residue Number(int),Value(float)
