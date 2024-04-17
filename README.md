@@ -10,6 +10,7 @@ Forked from https://github.com/kmdalton/pymolcolorizer and updated for Python 3 
 
 ###Prerequisites
 1. The PyMOL molecular graphics software can be obtained from one of the following sources:
+  * https://github.com/schrodinger/pymol-open-source
   * https://sourceforge.net/projects/pymol/
   * https://www.pymol.org/
 2. Matplotlib (http://matplotlib.org/)
